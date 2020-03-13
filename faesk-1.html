@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fæsk-1</title>
+</head>
+<style>
+    @import url('https://fonts.googleapis.com/css?family=Bungee+Inline&display=swap');
+
+    body {
+        background-color: lightskyblue;
+        overflow: hidden;
+        font-family: 'Bungee Inline', cursive;
+    }
+
+    #div {
+        position: absolute;
+        background-image: url(img/SWIM_TO_RIGHT.gif);
+        background-size: contain;
+        background-repeat: no-repeat;
+        width: 100px;
+        height: 100px;
+    }
+
+    #mine {
+        position: absolute;
+        width: 50px;
+        height: 50px;
+        background-image: url(img/mine.png);
+        background-size: cover;
+    }
+
+    #kiste {
+        position: absolute;
+        width: 50px;
+        height: 50px;
+        background-image: url(img/kiste.png);
+        background-size: contain;
+        background-repeat: no-repeat;
+    }
+
+    #info {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        border: 2px solid black;
+        max-width: 25vw;
+        text-align: center;
+        background-color: white;
+        border-radius: .5rem;
+        opacity: 0.9;
+    }
+
+    #pauseKnapp,
+    #reloadKnapp {
+        margin: 1em;
+        padding: 1em;
+    }
+
+    #hdr,
+    #hdrPoeng,
+    #hdrLiv {
+        column-span: 2;
+    }
+
+    #boble {
+        position: absolute;
+        width: 30px;
+        height: 30px;
+        background-image: url(img/boble_1.png);
+        background-size: contain;
+        opacity: 0.8;
+    }
+</style>
+
+<body>
+    <div id="info">
+        <h1 id="hdr">Fæsk-1</h1>
+        <h2 id="hdrLiv">Liv: 10</h2>
+        <h2 id="hdrPoeng">Poeng: 0</h2>
+        <h2 id="hdrRekord"></h2>
+        <button id="reloadKnapp"><b>↩</b></button>
+        <button id="pauseKnapp"><b>▶</b></button>
+    </div>
+    <div id="opacityControl">
+        <div id="boble"></div>
+        <div id="div"></div>
+        <div id="mine"></div>
+        <div id="kiste"></div>
+    </div>
+    <audio id="snd" src="snd/soundtrack.mp3" loop></audio>
+    <audio id="snd2" src="snd/soundtrack2.mp3" loop></audio>
+    <audio id="skade" src="snd/skade.wav"></audio>
+    <audio id="pop" src="snd/pop.wav"></audio>
+    <audio id="vegg" src="snd/vegg.wav"></audio>
+    <audio id="gameOver" src="snd/gameOver.wav"></audio>
+    <audio id="splash" src="snd/splash.wav"></audio>
+    <script>
+        var snd = document.getElementById("snd");
+        var snd2 = document.getElementById("snd2");
+        var splash = document.getElementById("splash");
+        var pop = document.getElementById("pop");
+        var skade = document.getElementById("skade");
+        var vegg = document.getElementById("vegg");
+        var gameOver = document.getElementById("gameOver");
+        var div = document.getElementById("div");
+        var theGameIsOn = false;
+        var xPos = 100;
+        var yPos = 100;
+        var xretning = 1;
+        var yretning = 0;
+        var fart = 5;
+        var hdr = document.getElementById("hdr");
+        var liv = 10;
+        var poeng = 0;
+        var hdrPoeng = document.getElementById("hdrPoeng");
+        var hdrRekord = document.getElementById("hdrRekord");
+        if (localStorage.rekord === undefined) {
+            localStorage.rekord = 0;
+        }
+        var hdrLiv = document.getElementById("hdrLiv");
+        var pauseKnapp = document.getElementById("pauseKnapp");
+        var reloadKnapp = document.getElementById("reloadKnapp");
+        var opacityControl = document.getElementById("opacityControl");
+        hdrRekord.innerHTML = "Rekord: " + localStorage.rekord;
+        opacityControl.style.opacity = 0.4;
+        var mine = document.getElementById("mine");
+        var mineinfo = {
+            xpos: 800,
+            ypos: 400
+        }
+        var boble = document.getElementById("boble");
+        boble.style.top = innerWidth + 30 + "px";
+        mine.style.left = mineinfo.xpos + "px";
+        mine.style.top = mineinfo.ypos + "px";
+        var kiste = document.getElementById("kiste");
+        var kisteinfo = {
+            xpos: 400,
+            ypos: 500
+        }
+        kiste.style.left = mineinfo.xpos + "px";
+        kiste.style.top = mineinfo.ypos + "px";
+
+
+        window.setInterval(function () {
+            var boblenr = Math.floor(Math.random() * (3)) + 1;
+            boble.style.backgroundImage = "url(img/boble_" + boblenr + ".png)";
+            var boblex = Math.floor(Math.random() * (innerWidth + 1));
+            boble.style.left = boblex + "px";
+            var fall = boble.animate([{
+                top: innerHeight - boble.style.height + "px",
+            }, {
+                top: "0px"
+            }], {
+                iterations: 1,
+                duration: 5000
+            });
+        }, 5000);
+
+        function flytt() {
+            xPos = xPos + fart * xretning;
+            yPos = yPos + fart * yretning;
+            div.style.left = xPos + "px";
+            div.style.top = yPos + "px";
+        }
+
+        function rekord() {
+            if (poeng > localStorage.rekord) {
+                localStorage.rekord = poeng;
+                hdrRekord.innerHTML = "Ny rekord: " + poeng;
+                hdrRekord.style.color = "red";
+            }
+        }
+
+        function flyttmine() {
+            mineinfo.xpos = Math.floor(Math.random() * (innerWidth - 50) + 1);
+            mineinfo.ypos = Math.floor(Math.random() * (innerHeight - 50) + 1);
+            /*while (mineinfo.xpos < ) {
+
+            }*/
+        }
+
+        function swim(direction) {
+            var random = Math.floor(Math.random() * 4) + 1;
+            splash.src = "snd/splash_" + random + ".wav";
+            splash.play();
+            div.style.backgroundImage = "url(img/SWIM_TO_RIGHT.gif)";
+            if (direction === "down") {
+                if (xretning === -1) {
+                    div.style.backgroundImage = "url(img/SWIM_DOWN_LEFT.gif)";
+                } else {
+                    div.style.backgroundImage = "url(img/SWIM_DOWN_RIGHT.gif)";
+                }
+            } else if (direction === "up") {
+                if (xretning === -1) {
+                    div.style.backgroundImage = "url(img/SWIM_UP_LEFT.gif)";
+                } else {
+                    div.style.backgroundImage = "url(img/SWIM_UP_RIGHT.gif)";
+                }
+            } else if (direction === "right") {
+                div.style.backgroundImage = "url(img/SWIM_TO_RIGHT.gif)";
+            } else if (direction === "left") {
+                div.style.backgroundImage = "url(img/SWIM_TO_LEFT.gif)";
+            }
+        }
+
+        function sjekkTreffVegg() {
+            if (xPos <= 0) {
+                vegg.play();
+                xretning = 1;
+                swim("right");
+                poeng -= 100;
+                liv -= 1;
+            }
+            if (xPos >= window.innerWidth - 100) {
+                vegg.play();
+                xretning = -1;
+                swim("left");
+                poeng -= 100;
+                liv -= 1;
+            }
+            if (yPos <= 0) {
+                vegg.play();
+                swim("down");
+                yretning = 1;
+                poeng -= 100;
+                liv -= 1;
+            }
+            if (yPos >= window.innerHeight - 100) {
+                vegg.play();
+                swim("up");
+                yretning = -1;
+                poeng -= 100;
+                liv -= 1;
+            }
+        }
+
+        function sjekkTreffmine() {
+            var venstre = xPos + 100 < mineinfo.xpos;
+            var hoyre = xPos > mineinfo.xpos + 50;
+            var over = yPos + 100 < mineinfo.ypos;
+            var under = yPos > mineinfo.ypos + 50;
+            if (!venstre && !hoyre && !over && !under) {
+                skade.play();
+                xretning = -xretning;
+                yretning = -yretning;
+                liv -= 1;
+                poeng -= 100;
+                flyttmine();
+            }
+            mine.style.left = mineinfo.xpos + "px";
+            mine.style.top = mineinfo.ypos + "px";
+        }
+
+        function sjekkTreffkiste() {
+            var venstre = xPos + 100 < kisteinfo.xpos;
+            var hoyre = xPos > kisteinfo.xpos + 50;
+            var over = yPos + 100 < kisteinfo.ypos;
+            var under = yPos > kisteinfo.ypos + 50;
+            if (!venstre && !hoyre && !over && !under) {
+                pop.play();
+                poeng += 500;
+                kisteinfo.xpos = Math.floor(Math.random() * (innerWidth - 50) + 1);
+                kisteinfo.ypos = Math.floor(Math.random() * (innerHeight - 50) + 1);
+                flyttmine();
+
+            }
+            kiste.style.left = kisteinfo.xpos + "px";
+            kiste.style.top = kisteinfo.ypos + "px";
+        }
+
+
+        function gameLoop() {
+            sjekkTreffmine();
+            sjekkTreffkiste();
+            hdrPoeng.innerHTML = "Poeng: " + poeng;
+            hdrLiv.innerHTML = "Liv: " + liv;
+            if (liv === 0) {
+                gameOver.play();
+                theGameIsOn = false;
+                hdr.innerHTML = "Game over!";
+                opacityControl.style.opacity = 0.4;
+                return
+
+            }
+            flytt();
+            sjekkTreffVegg();
+            poeng += 1;
+            if (theGameIsOn === true) {
+                requestAnimationFrame(gameLoop);
+            }
+            rekord();
+        }
+        gameLoop();
+        document.onkeydown = function (evt) {
+            var tastekode = evt.keyCode;
+            if (tastekode === 39) { //Høyre
+                xretning = 1;
+                yretning = 0;
+                swim("right");
+            }
+            if (tastekode === 37) { //Venstre
+                xretning = -1;
+                yretning = 0;
+                swim("left");
+            }
+            if (tastekode === 38) { //Opp
+                swim("up");
+                yretning = -1;
+                xretning = 0;
+
+            }
+            if (tastekode === 40) { //Ned
+                swim("down");
+                yretning = 1;
+                xretning = 0;
+            }
+        }
+
+        pauseKnapp.onclick = function () {
+            if (theGameIsOn) {
+                theGameIsOn = false;
+                opacityControl.style.opacity = 0.4;
+                pauseKnapp.innerHTML = "<b>▶</b>";
+                snd.pause();
+                snd2.play();
+            } else {
+                snd2.pause();
+                snd.play();
+                theGameIsOn = true;
+                opacityControl.style.opacity = 1;
+                gameLoop();
+                pauseKnapp.innerHTML = "<b>||</b>";
+            }
+
+        }
+        reloadKnapp.onclick = function () {
+            location.reload();
+        }
+        window.setInterval(function () {
+            if (theGameIsOn) {
+                fart++;
+            }
+        }, 10000);
+        window.onload = function () {
+            snd2.play();
+        }
+    </script>
+</body>
+
+</html>
