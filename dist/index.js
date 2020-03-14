@@ -1,3 +1,4 @@
+console.log(innerWidth);
 var snd = document.getElementById("snd");
 var snd2 = document.getElementById("snd2");
 var splash = document.getElementById("splash");
@@ -16,6 +17,10 @@ var opacityControl = document.getElementById("opacityControl");
 var mine = document.getElementById("mine");
 var boble = document.getElementById("boble");
 var chest = document.getElementById("chest");
+var info = document.getElementById("info");
+var menu = document.getElementById("menu");
+var start = document.getElementById("start");
+var body = document.getElementsByTagName("body");
 var theGameIsOn = false;
 var xPos = 100;
 var yPos = 500;
@@ -35,6 +40,7 @@ var chestinfo = {
 if (localStorage.highscore === undefined) {
     localStorage.highscore = 0;
 }
+info.style.visibility = opacityControl.style.visibility = "hidden";
 hdrhighscore.innerHTML = "Highscore: " + localStorage.highscore;
 opacityControl.style.opacity = 0.4;
 boble.style.top = innerWidth + 30 + "px";
@@ -42,8 +48,16 @@ mine.style.left = mineinfo.xpos + "px";
 mine.style.top = mineinfo.ypos + "px";
 chest.style.left = mineinfo.xpos + "px";
 chest.style.top = mineinfo.ypos + "px";
+start.onclick = function () {
+    menu.style.visibility = "hidden";
+    info.style.visibility = opacityControl.style.visibility = "visible";
+    snd2.pause();
+    snd.play();
+    theGameIsOn = true;
+    opacityControl.style.opacity = 1;
+    gameLoop();
+}
 
-// PRELOAD IMAGES //
 
 
 
@@ -170,8 +184,8 @@ function gameLoop() {
         theGameIsOn = false;
         hdr.innerHTML = "Game over!";
         opacityControl.style.opacity = 0.4;
+        pauseplay();
         return
-
     }
     move();
     checkCollisionVegg();
@@ -225,7 +239,31 @@ pauseKnapp.onclick = function () {
 
 }
 reloadKnapp.onclick = function () {
-    location.reload();
+    xPos = 100;
+    yPos = 500;
+    xDirection = 1;
+    yDirection = 0;
+    fart = 5;
+    liv = 10;
+    hdrLiv.innerHTML = liv + '&nbsp;&nbsp;<img width="30px" src="img/hjerte.png">';
+    points = 0;
+    hdrPoints.innerHTML = "Points: " + points;
+    move();
+    swim("right");
+    mine.style.left = mineinfo.xpos + "px";
+    mine.style.top = mineinfo.ypos + "px";
+    chest.style.left = mineinfo.xpos + "px";
+    chest.style.top = mineinfo.ypos + "px";
+    reloadKnapp.style.transition = "";
+    snd.pause();
+    snd.currentTime = 0
+    snd2.currentTime = 0;
+    snd2.play();
+    menu.style.visibility = "visible";
+    info.style.visibility = opacityControl.style.visibility = "hidden";
+    pop.play();
+    theGameIsOn = false;
+    opacityControl.style.opacity = 0.4;
 }
 // WINDOW //
 window.setInterval(function () {
