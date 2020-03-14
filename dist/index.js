@@ -18,7 +18,7 @@ var boble = document.getElementById("boble");
 var chest = document.getElementById("chest");
 var theGameIsOn = false;
 var xPos = 100;
-var yPos = 100;
+var yPos = 500;
 var xDirection = 1;
 var yDirection = 0;
 var fart = 5;
@@ -29,13 +29,13 @@ var mineinfo = {
     ypos: 400
 }
 var chestinfo = {
-    xpos: 400,
-    ypos: 500
+    xpos: 800,
+    ypos: 100
 }
 if (localStorage.highscore === undefined) {
     localStorage.highscore = 0;
 }
-hdrhighscore.innerHTML = "highscore: " + localStorage.highscore;
+hdrhighscore.innerHTML = "Highscore: " + localStorage.highscore;
 opacityControl.style.opacity = 0.4;
 boble.style.top = innerWidth + 30 + "px";
 mine.style.left = mineinfo.xpos + "px";
@@ -57,7 +57,7 @@ function move() {
 function highscore() {
     if (points > localStorage.highscore) {
         localStorage.highscore = points;
-        hdrhighscore.innerHTML = "New highscore: " + points;
+        hdrhighscore.innerHTML = "New highscore: " + localStorage.highscore;
         hdrhighscore.style.color = "red";
     }
 }
@@ -163,7 +163,7 @@ function checkCollisionchest() {
 function gameLoop() {
     checkCollisionmine();
     checkCollisionchest();
-    hdrPoints.innerHTML = "points: " + points;
+    hdrPoints.innerHTML = "Points: " + points;
     hdrLiv.innerHTML = liv + '<img width="30px" src="img/hjerte.png">';
     if (liv === 0) {
         gameOver.play();
