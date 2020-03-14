@@ -164,7 +164,7 @@ function gameLoop() {
     checkCollisionmine();
     checkCollisionchest();
     hdrPoints.innerHTML = "Points: " + points;
-    hdrLiv.innerHTML = liv + '<img width="30px" src="img/hjerte.png">';
+    hdrLiv.innerHTML = liv + '&nbsp;&nbsp;<img width="30px" src="img/hjerte.png">';
     if (liv === 0) {
         gameOver.play();
         theGameIsOn = false;
