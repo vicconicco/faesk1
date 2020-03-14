@@ -1,9 +1,5 @@
 @import url('https://fonts.googleapis.com/css?family=Bungee+Inline&display=swap');
 
-div {
-    border: 2px solid black;
-}
-
 body {
     background-color: lightskyblue;
     overflow: hidden;
