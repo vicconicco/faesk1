@@ -43,6 +43,8 @@ mine.style.top = mineinfo.ypos + "px";
 chest.style.left = mineinfo.xpos + "px";
 chest.style.top = mineinfo.ypos + "px";
 
+// PRELOAD IMAGES //
+
 
 
 function move() {
